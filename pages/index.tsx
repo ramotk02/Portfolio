@@ -11,7 +11,9 @@ export default function Home() {
             Fullstack-Webentwickler mit einer Leidenschaft für Backend-Technologien,
             moderne Interfaces und interaktive Erlebnisse. Aktuell in Paderborn.
           </p>
-
+<h1 className="text-4xl font-rajdhani">
+  Bonjour avec Rajdhani et Tailwind !
+</h1>
           <a
             href="#projects"
             className="mt-8 inline-block bg-white text-black dark:bg-neutral-100 dark:text-neutral-900 px-6 py-3 rounded-full font-semibold hover:bg-neutral-300 transition"
@@ -27,6 +29,7 @@ export default function Home() {
           Ich bin Omar Taky, ein leidenschaftlicher Webentwickler mit Schwerpunkt Backend.
           Ich lebe in Paderborn, Deutschland 🇩🇪.
         </p>
+
       </section>
 
       <section id="projects" className="min-h-screen p-30">
@@ -43,6 +46,8 @@ export default function Home() {
         <p>Du kannst mich per E-Mail erreichen: <strong>omartaky.ot@gmail.com</strong></p>
         <p>Oder auf LinkedIn, GitHub usw. (wird später hinzugefügt!)</p>
       </section>
+      
     </div>
+    
   );
 }
