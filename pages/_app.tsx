@@ -5,10 +5,9 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useRouter } from "next/router";
 import Layout from "../Components/layout";
 
-// ✅ Import Google Font une seule fois
 import { Rajdhani } from "next/font/google";
 
-// ✅ Configure la police une seule fois
+
 const rajdhani = Rajdhani({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
