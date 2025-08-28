@@ -46,13 +46,16 @@ function RadialProgress({ label, percent, index }) {
   }, [inView, percent, index]);
 
   return (
-    <div ref={ref} className="flex flex-col items-center space-y-2">
+    <div
+      ref={ref}
+      className="flex flex-col items-center space-y-2 transform transition-all duration-300 hover:scale-105 animate-fadeInUp"
+      style={{ animationDelay: `${index * 100}ms` }}
+    >
       <svg
         height={radius * 2}
         width={radius * 2}
         className="transform -rotate-90"
       >
-        {/* Cercle de fond */}
         <circle
           stroke="currentColor"
           className="text-neutral-300 dark:text-neutral-700"
@@ -62,7 +65,6 @@ function RadialProgress({ label, percent, index }) {
           cx={radius}
           cy={radius}
         />
-        {/* Cercle animé */}
         <circle
           stroke="url(#grad)"
           fill="transparent"
@@ -75,17 +77,16 @@ function RadialProgress({ label, percent, index }) {
           r={normalizedRadius}
           cx={radius}
           cy={radius}
-          className="transition-all duration-300 ease-out"
+          className="transition-all duration-500 ease-out"
         />
-        {/* Gradient */}
         <defs>
           <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="#51A2FF" /> 
-            <stop offset="100%" stopColor="#51A2FF" /> 
+            <stop offset="0%" stopColor="#51A2FF" />
+            <stop offset="100%" stopColor="#7F5AF0" />
           </linearGradient>
         </defs>
       </svg>
-      <span className="text-sm md:text-base text-neutral-900 dark:text-neutral-100 font-semibold">
+      <span className="text-sm md:text-base text-neutral-900 dark:text-neutral-100 font-semibold hover:text-blue-400 transition-colors duration-300">
         {label} — {progress}%
       </span>
     </div>
@@ -127,8 +128,8 @@ export default function Skills() {
   ];
 
   return (
-    <section className="rounded-2xl flex flex-col items-center justify-center space-y-10 max-w-5xl mx-auto my-20 px-6 py-12 rounded-2xl bg-white/70 dark:bg-neutral-800/70 shadow-lg">
-      <h2 className="text-3xl md:text-4xl font-extrabold text-blue-400 tracking-tight">
+    <section className="rounded-2xl flex flex-col items-center justify-center space-y-10 max-w-5xl mx-auto my-20 px-6 py-12 bg-white/70 dark:bg-neutral-800/70 shadow-xl backdrop-blur-md">
+      <h2 className="text-3xl md:text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500 tracking-tight animate-fadeInUp">
         Meine Skills
       </h2>
 
@@ -144,8 +145,6 @@ export default function Skills() {
           ))
         )}
       </div>
-
-    
     </section>
   );
 }
