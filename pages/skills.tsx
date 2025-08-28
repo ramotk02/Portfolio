@@ -1,18 +1,151 @@
-export default function Skills() {
+import React, { useEffect, useRef, useState } from "react";
+
+function useInView(options = { threshold: 0.2 }) {
+  const ref = useRef(null);
+  const [inView, setInView] = useState(false);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) {
+        setInView(true);
+        observer.unobserve(entry.target);
+      }
+    }, options);
+
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [options]);
+
+  return { ref, inView };
+}
+
+function RadialProgress({ label, percent, index }) {
+  const radius = 50;
+  const stroke = 8;
+  const normalizedRadius = radius - stroke * 2;
+  const circumference = normalizedRadius * 2 * Math.PI;
+
+  const { ref, inView } = useInView();
+  const [progress, setProgress] = useState(0);
+
+  useEffect(() => {
+    if (inView) {
+      let start = performance.now();
+      const duration = 1000 + index * 200;
+
+      const animate = (now) => {
+        const t = Math.min(1, (now - start) / duration);
+        setProgress(Math.round(percent * t));
+        if (t < 1) requestAnimationFrame(animate);
+      };
+
+      requestAnimationFrame(animate);
+    }
+  }, [inView, percent, index]);
+
   return (
-    <section
-        id="skills"
-        className="min-h-screen flex flex-col items-center justify-center space-y-12 animate-fadeIn max-w-4xl mx-auto my-20"
+    <div ref={ref} className="flex flex-col items-center space-y-2">
+      <svg
+        height={radius * 2}
+        width={radius * 2}
+        className="transform -rotate-90"
       >
-        <div className="p-8 rounded-2xl bg-white/20 backdrop-blur-sm border border-white/30 shadow-lg w-full max-w-2xl mx-auto transition-shadow duration-300 hover:shadow-green-400/40 text-center">
-          <h2 className="text-4xl font-extrabold mb-6 tracking-wide text-green-400 drop-shadow-md">Meine Skills</h2>
-          <ul className="text-lg md:text-xl space-y-4 text-gray-200 list-disc list-inside text-left">
-            <li>💻 <strong className="text-white">Frontend:</strong> HTML, CSS, JavaScript, React</li>
-            <li>🖥 <strong className="text-white">Backend:</strong> Node.js, Express, Java, Python</li>
-            <li>🗄 <strong className="text-white">Datenbanken:</strong> MongoDB</li>
-            <li>⚙ <strong className="text-white">Tools:</strong> Docker, Git, Tailwind CSS</li>
-          </ul>
-        </div>
-      </section>
+        {/* Cercle de fond */}
+        <circle
+          stroke="currentColor"
+          className="text-neutral-300 dark:text-neutral-700"
+          fill="transparent"
+          strokeWidth={stroke}
+          r={normalizedRadius}
+          cx={radius}
+          cy={radius}
+        />
+        {/* Cercle animé */}
+        <circle
+          stroke="url(#grad)"
+          fill="transparent"
+          strokeWidth={stroke}
+          strokeLinecap="round"
+          strokeDasharray={circumference}
+          strokeDashoffset={
+            circumference - (progress / 100) * circumference
+          }
+          r={normalizedRadius}
+          cx={radius}
+          cy={radius}
+          className="transition-all duration-300 ease-out"
+        />
+        {/* Gradient */}
+        <defs>
+          <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stopColor="#51A2FF" /> 
+            <stop offset="100%" stopColor="#51A2FF" /> 
+          </linearGradient>
+        </defs>
+      </svg>
+      <span className="text-sm md:text-base text-neutral-900 dark:text-neutral-100 font-semibold">
+        {label} — {progress}%
+      </span>
+    </div>
+  );
+}
+
+export default function Skills() {
+  const categories = [
+    {
+      title: "Frontend",
+      items: [
+        { name: "HTML", percent: 90 },
+        { name: "CSS", percent: 85 },
+        { name: "JavaScript", percent: 80 },
+        { name: "React", percent: 75 },
+      ],
+    },
+    {
+      title: "Backend",
+      items: [
+        { name: "Node.js", percent: 80 },
+        { name: "Express", percent: 75 },
+        { name: "Java", percent: 70 },
+        { name: "Python", percent: 65 },
+      ],
+    },
+    {
+      title: "Datenbanken",
+      items: [{ name: "MongoDB", percent: 75 }],
+    },
+    {
+      title: "Tools",
+      items: [
+        { name: "Docker", percent: 65 },
+        { name: "Git", percent: 85 },
+        { name: "Tailwind CSS", percent: 85 },
+      ],
+    },
+  ];
+
+  return (
+    <section className="rounded-2xl flex flex-col items-center justify-center space-y-10 max-w-5xl mx-auto my-20 px-6 py-12 rounded-2xl bg-white/70 dark:bg-neutral-800/70 shadow-lg">
+      <h2 className="text-3xl md:text-4xl font-extrabold text-blue-400 tracking-tight">
+        Meine Skills
+      </h2>
+
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+        {categories.map((cat) =>
+          cat.items.map((s, i) => (
+            <RadialProgress
+              key={s.name}
+              label={s.name}
+              percent={s.percent}
+              index={i}
+            />
+          ))
+        )}
+      </div>
+
+    
+    </section>
   );
 }

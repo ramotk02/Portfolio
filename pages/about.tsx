@@ -4,7 +4,7 @@ export default function About() {
         id="about"
         className="min-h-screen flex flex-col items-center justify-center space-y-12 animate-slideUp max-w-4xl mx-auto my-20"
       >
-        <div className="p-8 rounded-2xl bg-white/20 backdrop-blur-sm border border-white/30 shadow-lg w-full max-w-2xl mx-auto transition-shadow duration-300 hover:shadow-white/50 text-center">
+        <div className="p-8 rounded-2xl bg-white/70 dark:bg-neutral-800/70 shadow-lg w-full max-w-2xl mx-auto transition-shadow duration-300 text-center">
           <h2 className="text-4xl font-extrabold mb-6 tracking-wide text-blue-400 drop-shadow-md">Über mich</h2>
           <p className="text-lg md:text-xl max-w-2xl leading-relaxed text-gray-100 mb-6">
             Ich bin <strong className="text-white underline decoration-green-400 decoration-2 underline-offset-2">Omar Taky</strong>, 
