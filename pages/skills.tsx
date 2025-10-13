@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 
-function useInView(options = { threshold: 0.2 }) {
-  const ref = useRef(null);
+function useInView(options: IntersectionObserverInit = { threshold: 0.2 }) {
+  const ref = useRef<HTMLDivElement | null>(null);
   const [inView, setInView] = useState(false);
 
   useEffect(() => {
@@ -21,12 +21,13 @@ function useInView(options = { threshold: 0.2 }) {
   return { ref, inView };
 }
 
-function RadialProgress({ label, percent, index }) {
-  const radius = 50;
-  const stroke = 8;
-  const normalizedRadius = radius - stroke * 2;
-  const circumference = normalizedRadius * 2 * Math.PI;
+type LinearProgressProps = {
+  label: string;
+  percent: number;
+  index: number;
+};
 
+function LinearProgress({ label, percent, index }: LinearProgressProps) {
   const { ref, inView } = useInView();
   const [progress, setProgress] = useState(0);
 
@@ -35,7 +36,7 @@ function RadialProgress({ label, percent, index }) {
       let start = performance.now();
       const duration = 1000 + index * 200;
 
-      const animate = (now) => {
+      const animate = (now: number) => {
         const t = Math.min(1, (now - start) / duration);
         setProgress(Math.round(percent * t));
         if (t < 1) requestAnimationFrame(animate);
@@ -48,53 +49,41 @@ function RadialProgress({ label, percent, index }) {
   return (
     <div
       ref={ref}
-      className="flex flex-col items-center space-y-2 transform transition-all duration-300 hover:scale-105 animate-fadeInUp"
+      className="flex flex-col w-[80%] space-y-2 animate-fadeInUp transform transition-all duration-300 hover:scale-[1.02]"
       style={{ animationDelay: `${index * 100}ms` }}
     >
-      <svg
-        height={radius * 2}
-        width={radius * 2}
-        className="transform -rotate-90"
-      >
-        <circle
-          stroke="currentColor"
-          className="text-neutral-300 dark:text-neutral-700"
-          fill="transparent"
-          strokeWidth={stroke}
-          r={normalizedRadius}
-          cx={radius}
-          cy={radius}
-        />
-        <circle
-          stroke="url(#grad)"
-          fill="transparent"
-          strokeWidth={stroke}
-          strokeLinecap="round"
-          strokeDasharray={circumference}
-          strokeDashoffset={
-            circumference - (progress / 100) * circumference
-          }
-          r={normalizedRadius}
-          cx={radius}
-          cy={radius}
-          className="transition-all duration-500 ease-out"
-        />
-        <defs>
-          <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="#51A2FF" />
-            <stop offset="100%" stopColor="#7F5AF0" />
-          </linearGradient>
-        </defs>
-      </svg>
-      <span className="text-sm md:text-base text-neutral-900 dark:text-neutral-100 font-semibold hover:text-blue-400 transition-colors duration-300">
-        {label} — {progress}%
-      </span>
+      <div className="flex justify-between">
+        <span className="text-sm md:text-base font-semibold text-neutral-900 dark:text-neutral-100">
+          {label}
+        </span>
+        <span className="text-sm font-medium text-blue-400">{progress}%</span>
+      </div>
+
+      <div className="w-full h-3 bg-neutral-200 dark:bg-neutral-700 rounded-full overflow-hidden">
+        <div
+          className="h-full rounded-full transition-all duration-500 ease-out"
+          style={{
+            width: `${progress}%`,
+            background: "linear-gradient(to right, #51A2FF, #7F5AF0)",
+          }}
+        ></div>
+      </div>
     </div>
   );
 }
 
+type Skill = {
+  name: string;
+  percent: number;
+};
+
+type Category = {
+  title: string;
+  items: Skill[];
+};
+
 export default function Skills() {
-  const categories = [
+  const categories: Category[] = [
     {
       title: "Frontend",
       items: [
@@ -128,22 +117,29 @@ export default function Skills() {
   ];
 
   return (
-    <section className="rounded-2xl flex flex-col items-center justify-center space-y-10 max-w-5xl mx-auto my-20 px-6 py-12 bg-white/70 dark:bg-neutral-800/70 shadow-xl backdrop-blur-md">
+    <section className="flex flex-col items-center justify-center space-y-10 max-w-5xl mx-auto my-20 px-6 py-12 bg-white/70 dark:bg-neutral-800/70 shadow-xl backdrop-blur-md rounded-2xl">
       <h2 className="text-3xl md:text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500 tracking-tight animate-fadeInUp">
         Meine Skills
       </h2>
 
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
-        {categories.map((cat) =>
-          cat.items.map((s, i) => (
-            <RadialProgress
-              key={s.name}
-              label={s.name}
-              percent={s.percent}
-              index={i}
-            />
-          ))
-        )}
+      <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-6">
+        {categories.map((cat, i) => (
+          <div key={cat.title} className="space-y-4">
+            <h3 className="text-xl font-bold text-neutral-800 dark:text-neutral-200">
+              {cat.title}
+            </h3>
+            <div className="space-y-3">
+              {cat.items.map((s, j) => (
+                <LinearProgress
+                  key={s.name}
+                  label={s.name}
+                  percent={s.percent}
+                  index={i * 10 + j}
+                />
+              ))}
+            </div>
+          </div>
+        ))}
       </div>
     </section>
   );
